@@ -3,6 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  appUrl: "http://localhost:4200",
+  casUrl: "https://cas.isicod.net/cas",
+  casValidateUrl: "https://cas.isicod.net/cas/p3/serviceValidate",
   production: false
 };
 
