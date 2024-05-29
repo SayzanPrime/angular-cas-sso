@@ -11,11 +11,11 @@ export class NotProtectedComponent implements OnInit {
 
   constructor(private apiService: ApiService) { }
 
-  testVar: string = "";
+  testVar: string = "Welcome to not protected url";
 
   ngOnInit(): void {
-    this.apiService.fetchNotProtectedData().pipe(take(1)).subscribe(resp => {
-      this.testVar = resp.message;
-    });
+    // this.apiService.fetchNotProtectedData().pipe(take(1)).subscribe(resp => {
+    //   this.testVar = resp.message;
+    // });
   }
 }
