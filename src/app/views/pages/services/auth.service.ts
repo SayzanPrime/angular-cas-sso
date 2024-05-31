@@ -9,7 +9,7 @@ import { map } from 'rxjs';
 export class AuthService {
 
   private casUrl = 'https://cas.isicod.net/cas';
-  private serviceUrl = 'http://localhost:4200';
+  private serviceUrl = 'https://not-protected.isicod.net';
 
   constructor(private http: HttpClient, private router: Router) {}
 
