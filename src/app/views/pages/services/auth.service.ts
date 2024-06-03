@@ -44,7 +44,7 @@ export class AuthService {
     const params = new HttpParams()
       .set('service', serviceUrl)
       .set('ticket', ticket)
-      .set('pgtUrl', 'http://localhost:4200/callback');
+      .set('pgtUrl', 'https://not-protected.isicod.net/callback');
    
     return this.http.get(`${this.casUrl}/p3/serviceValidate`, { params, responseType: 'text' })
       .pipe(map(response => this.parseCasResponse(response)));
@@ -52,7 +52,7 @@ export class AuthService {
 
   getProxyTicket(pgt: string, targetService: string) {
     const params = new HttpParams()
-      .set('service', encodeURIComponent('http://localhost:4200/protected'))
+      .set('service', encodeURIComponent('https://not-protected.isicod.net/protected'))
       .set('ticket', encodeURIComponent(pgt));
 
     this.http.get('https://cas.isicod.net/cas/proxy', { params, responseType: 'text' })
