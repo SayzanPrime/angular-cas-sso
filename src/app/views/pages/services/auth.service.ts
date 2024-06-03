@@ -13,9 +13,9 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  checkLoginStatus(service: string) {
-    const authToken = localStorage.getItem('auth_token');
-    if (authToken) {
+  isAuthenticated(service: string) {
+    const pgt = localStorage.getItem('pgt');
+    if (pgt) {
       // Token exists, no need to redirect
       return;
     }
@@ -23,7 +23,9 @@ export class AuthService {
     if (ticket) {
       this.validateTicket(ticket, service).subscribe((response: any) => {
         if (response.authenticationSuccess) {
-          localStorage.setItem('auth_token', ticket);
+          localStorage.setItem('pgt', response.pgt);
+          this.router.navigate([service])
+          //this.getProxyTicket(response.pgt, this.serviceUrl);
         } else {
           this.redirectToLogin(service);
         }
@@ -41,10 +43,36 @@ export class AuthService {
   private validateTicket(ticket: string, serviceUrl: string) {
     const params = new HttpParams()
       .set('service', serviceUrl)
-      .set('ticket', ticket);
-
+      .set('ticket', ticket)
+      .set('pgtUrl', 'http://localhost:4200/callback');
+   
     return this.http.get(`${this.casUrl}/p3/serviceValidate`, { params, responseType: 'text' })
       .pipe(map(response => this.parseCasResponse(response)));
+  }
+
+  getProxyTicket(pgt: string, targetService: string) {
+    const params = new HttpParams()
+      .set('service', encodeURIComponent('http://localhost:4200/protected'))
+      .set('ticket', encodeURIComponent(pgt));
+
+    this.http.get('https://cas.isicod.net/cas/proxy', { params, responseType: 'text' })
+      .subscribe(response => {
+        // const parser = new DOMParser();
+        // const xmlDoc = parser.parseFromString(response, 'text/xml');
+        // const ptElement = xmlDoc.getElementsByTagName('cas:proxyTicket')[0];
+
+        // if (ptElement) {
+        //   const proxyTicket = ptElement.textContent;
+        //   console.log('Proxy Ticket:', proxyTicket);
+        //   // Now you can use the proxyTicket to access the backend service
+        // } else {
+        //   console.error('No proxy ticket found in the response');
+        // }
+        console.log(response);
+        
+      }, error => {
+        console.error('Error requesting Proxy Ticket:', error);
+      });
   }
 
   private parseCasResponse(response: string) {
@@ -54,7 +82,6 @@ export class AuthService {
     if (authenticationSuccess) {
       const user = authenticationSuccess.getElementsByTagName('cas:user')[0].textContent;
       const pgt = authenticationSuccess.getElementsByTagName('cas:proxyGrantingTicket')[0]?.textContent;
-      console.log(pgt);
       return { authenticationSuccess: true, user, pgt };
     }
     return { authenticationSuccess: false };

@@ -19,6 +19,6 @@ export class ProtectedComponent implements OnInit {
   testVar: string = "";
 
   ngOnInit(): void {
-    this.authService.checkLoginStatus(this.currentPath);
+    this.authService.isAuthenticated(this.currentPath);
   }
 }
