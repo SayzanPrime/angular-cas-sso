@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../services/api.service';
 import { take } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-protected',
@@ -11,14 +9,13 @@ import { AuthService } from '../services/auth.service';
 })
 export class ProtectedComponent implements OnInit {
 
-  constructor(private authService: AuthService,
-    private route: ActivatedRoute,
-    private router: Router, private apiService: ApiService) { }
+  constructor(private apiService: ApiService) { }
 
-  currentPath: string = window.location.origin + window.location.pathname;
   testVar: string = "";
 
   ngOnInit(): void {
-    this.authService.isAuthenticated(this.currentPath);
+    this.apiService.fetchNotProtectedData().pipe(take(1)).subscribe(resp => {
+      this.testVar = resp.message;
+    });
   }
 }
