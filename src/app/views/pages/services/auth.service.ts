@@ -31,10 +31,9 @@ export class AuthService {
         .toPromise()
         .then(response => {
           localStorage.setItem('jwt', response.jwt);
+          localStorage.setItem('profil', response.profil);
+
           const parsedUrl = new URL(this.service);
-          parsedUrl.searchParams.delete('ticket');
-          console.log(parsedUrl);
-          
           this.router.navigate([parsedUrl.pathname.toString()]);
           return true;
         })
