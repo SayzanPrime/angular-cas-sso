@@ -14,7 +14,7 @@ export class ProtectedComponent implements OnInit {
   testVar: string = "";
 
   ngOnInit(): void {
-    this.apiService.fetchNotProtectedData().pipe(take(1)).subscribe(resp => {
+    this.apiService.fetchProtectedData().pipe(take(1)).subscribe(resp => {
       this.testVar = resp.message;
     });
   }

@@ -22,23 +22,29 @@ export class AuthService {
     }
   }
 
-  generateJwt() {
+  generateJwt(): Promise<boolean> {
     const params = new URLSearchParams(window.location.search);
     const ticket = params.get('ticket');
 
     if (ticket) {
-      this.http.get<any>(`http://localhost:8900/api/v1/auth/jwt?ticket=${ticket}&service=${this.service}`)
-      .subscribe(response => {
-        localStorage.setItem('jwt', response.jwt);
-        const parsedUrl = new URL(this.service)
-        parsedUrl.searchParams.delete('ticket');
-        console.log(parsedUrl);
-        
-        this.router.navigate([parsedUrl]);
-      });
-
+      return this.http.get<any>(`http://localhost:8900/api/v1/auth/jwt?ticket=${ticket}&service=${this.service}`)
+        .toPromise()
+        .then(response => {
+          localStorage.setItem('jwt', response.jwt);
+          const parsedUrl = new URL(this.service);
+          parsedUrl.searchParams.delete('ticket');
+          console.log(parsedUrl);
+          
+          this.router.navigate([parsedUrl.pathname.toString()]);
+          return true;
+        })
+        .catch(error => {
+          console.error('Error fetching JWT:', error);
+          return false;
+        });
     } else {
       this.redirectToLogin();
+      return Promise.resolve(false);
     }
   }
 

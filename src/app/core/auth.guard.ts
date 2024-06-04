@@ -15,8 +15,9 @@ export class AuthGuard implements CanActivate {
   ): boolean | Observable<boolean> | Promise<boolean> {
 
     if (!this.authService.isAuthenticated()) {
-        this.authService.generateJwt();
+      return this.authService.generateJwt();
     }
+    
     return true;
   }
 }
